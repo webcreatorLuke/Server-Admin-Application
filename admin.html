@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Review Applications</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #020617;
+      color: white;
+      padding: 30px;
+    }
+    h1 { text-align: center; }
+    .app {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 650px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    }
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #334155;
+      display: inline-block;
+    }
+    button {
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      margin-right: 8px;
+      font-weight: bold;
+    }
+    .approve { background: #22c55e; }
+    .decline { background: #ef4444; }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Admin Applications</h1>
+  <div id="apps"></div>
+
+  <script>
+    function loadApps() {
+      const apps = JSON.parse(localStorage.getItem("adminApps") || "[]");
+      const box = document.getElementById("apps");
+      box.innerHTML = "";
+
+      if (apps.length === 0) {
+        box.innerHTML = "<h2 style='text-align:center;'>No applications yet.</h2>";
+        return;
+      }
+
+      apps.forEach(app => {
+        const div = document.createElement("div");
+        div.className = "app";
+        div.innerHTML = `
+          <h2>${app.username}</h2>
+          <p><b>Discord:</b> ${app.discord}</p>
+          <p><b>Reason:</b> ${app.reason}</p>
+          <p class="status">Status: ${app.status}</p><br><br>
+          <button class="approve" onclick="approve(${app.id})">Approve</button>
+          <button class="decline" onclick="decline(${app.id})">Decline</button>
+        `;
+        box.appendChild(div);
+      });
+    }
+
+    function approve(id) {
+      const apps = JSON.parse(localStorage.getItem("adminApps") || "[]");
+      apps.find(a => a.id === id).status = "approved";
+      localStorage.setItem("adminApps", JSON.stringify(apps));
+      loadApps();
+    }
+
+    function decline(id) {
+      const apps = JSON.parse(localStorage.getItem("adminApps") || "[]");
+      apps.find(a => a.id === id).status = "declined";
+      localStorage.setItem("adminApps", JSON.stringify(apps));
+      loadApps();
+    }
+
+    loadApps();
+  </script>
+</body>
+</html>
