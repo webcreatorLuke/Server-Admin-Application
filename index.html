@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Application</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: white;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      width: 360px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 0;
+      border-radius: 10px;
+      box-sizing: border-box;
+    }
+    textarea { height: 120px; }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🛡️ Apply for Admin</h1>
+
+    <input id="username" placeholder="Minecraft username">
+    <input id="discord" placeholder="Discord username">
+    <textarea id="reason" placeholder="Why should you be admin?"></textarea>
+
+    <button onclick="submitApp()">Submit Application</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    function submitApp() {
+      const username = document.getElementById("username").value;
+      const discord = document.getElementById("discord").value;
+      const reason = document.getElementById("reason").value;
+
+      if (!username || !discord || !reason) {
+        status.innerText = "Please fill out everything.";
+        return;
+      }
+
+      const app = {
+        id: Date.now(),
+        username,
+        discord,
+        reason,
+        status: "pending"
+      };
+
+      const apps = JSON.parse(localStorage.getItem("adminApps") || "[]");
+      apps.push(app);
+      localStorage.setItem("adminApps", JSON.stringify(apps));
+      localStorage.setItem("myAppId", app.id);
+
+      status.innerText = "✅ Application submitted! Please wait for review.";
+    }
+
+    const myAppId = localStorage.getItem("myAppId");
+    const apps = JSON.parse(localStorage.getItem("adminApps") || "[]");
+    const myApp = apps.find(a => a.id == myAppId);
+
+    if (myApp?.status === "approved") {
+      status.innerText = "✅ Approved! Please wait, you will become admin soon.";
+    }
+
+    if (myApp?.status === "declined") {
+      status.innerText = "❌ Sorry, you have not been accepted.";
+    }
+  </script>
+</body>
+</html>
